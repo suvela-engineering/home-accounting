@@ -1,5 +1,8 @@
 # dependencies
 backend-homeacc/node_modules
 
+# change this to proper if needed
+frontend-homeac/node_modules
+
 # settings
 backend-homeacc/pool.env

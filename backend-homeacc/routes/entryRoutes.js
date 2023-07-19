@@ -16,8 +16,11 @@ router.route('/api/entries').
 router.route('/api/entry/:entryId').
     get(ctrl.fetchEntryById);
 
-router.route('api/deleteEntry/:entryId').
-    delete(ctrl.deleteEntry);
+router.route('/api/entry/').
+    post(ctrl.addEntry);
+
+router.route('/api/entry/delete/:entryIdToDelete').
+    put(ctrl.deleteEntry);
 
 //router.use(handler.asyncHandler);
 router.use(handler.errorHandler);

@@ -1,18 +1,29 @@
 
 module.exports = {
-    isNotNull(input, entity) {
-        let error = "";
-
-        if (input == null || input == '')
-            error = "Error " + entity + " not found.";
-
-        return error;
+    isNull: (input) => {
+        if (input == null || input == '' || input == undefined)
+            return true;
+        return false;
     },
-    isEntityDeleted: (entity, msg = '') => {
-        if (entity.deleted == false)
-            return msg;
-        if (msg.length == 0)
-            msg = 'Entity is deleted.'
-        return msg;
+    checkIdError: (id, entity = '') => {
+        if (module.exports.isNull(id))
+            return new Error(entity + ' id is null.');
+
+        else if (isNaN(id))
+            return new Error(entity + ' id is not a number.');
+
+        return null;
+    },
+    checkNullDeletedError: (input, entity, checkDeleted = false) => {
+        if (module.exports.isNull(input))
+            return new Error(entity + ' id is null.');
+
+        if (input.deleted && checkDeleted)
+            return new Error(entity + ' is already deleted');
+
+        if (input.deleted)
+            return new Error(entity + ' is deleted');
+
+        return null;
     }
-} 
+}

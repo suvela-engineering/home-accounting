@@ -3,55 +3,62 @@ const validator = require("../validators/validator");
 
 const getEntries = async (req, res, next) => {
     u = await sql.getEntries();
-    // if (checkNull(u)?.length > 0)
-    //     return next(new Error(error));
-    return u; 
+    if (validator.isNull(u?.rows))
+        return next(new Error(error));
+    return u.rows;
 }
 
-const getEntry = async (req, res, next) => {
-    let entryId = req.params.entryId;
-    let sError = '';
+const getEntry = async (req, res, next, id = null) => {
+    let entryId = id ?? req.params.entryId;
 
-    if (entryId == null) {
-        return next(new Error('Entry id is null.'));
-    }
-
-    else if (isNaN(entryId)) {
-        return next(new Error('Entry id is not a number.'));
-    }
+    let idValidationError = validator.checkIdError(entryId, 'Entry');
+    if (idValidationError != null)
+        return next(idValidationError);
 
     let u = await sql.getEntryById(entryId);
 
-    errorArr.push(validator.isNotNull(u?.rows[0], 'Entry'));
-
-    errorArr.push(isEntryDeleted(u?.rows[0]));
-
-    if (errorArr.length > 0)
-        return next(new Error(errorArr.join(", ")));
+    let entryNullDeletedError = validator.checkNullDeletedError(u?.rows[0], 'Entry');
+    if (entryNullDeletedError != null)
+        return next(entryNullDeletedError);
 
     return u.rows[0];
 }
 
-const deleteEntry = async (entryId = null) => {
-    let entry = getEntry(entryId, false);
-    isEntryDeleted(entry, 'entry is already deleted');
-    let u = await sql.deleteEntry(entryId);
+const addEntry = async (req, res, next) => {
+    const entryData = req.body;
 
-    let error = validator.isNotNull(u?.rows[0], 'Entry');
-    if (error?.length > 0) {
-        throw error;
-    }
-    return await u.rows[0];
+    if (validator.isNull(entryData))
+        return next(new Error("Data not provided"));
+
+    if (entryData.constructor === Object && Object.keys(entryData).length === 0)
+        return next(new Error("Object is missing information"));
+
+    let i = await sql.insertEntry(entryData);
+    let newEntryId = i?.rows[0]?.entry_id;
+
+    return await getEntry(req, res, next, newEntryId); // TOIMII NÄIN MUTTA EI EHKÄ HYVÄ, pitäsikö kutsua controllerin fetchentryid? vai oisko joku toinen
+    // parempi kun on lisätty insertillä käyttäjä ja sitte pitäisi palauttaa se lisätty
 }
 
+const deleteEntry = async (req, res, next) => {
+    let entryIdToDelete = req.params.entryIdToDelete;
 
+    let idValidationError = validator.checkIdError(entryIdToDelete, 'Entry');
+    if (idValidationError != null)
+        return next(idValidationError);
 
-// const checkNull = (entry) => {
-//     return validator.isNotNull(entry, 'Entry');
-// }
+    let entryToDelete = await sql.getEntryById(entryIdToDelete);
+
+    let entryNullDeletedError = validator.checkNullDeletedError(entryToDelete?.rows[0], 'Entry', true);
+    if (entryNullDeletedError != null)
+        return next(entryNullDeletedError);
+
+    await sql.deleteEntry(entryIdToDelete);
+}
 
 module.exports = {
     getEntries,
     getEntry,
+    addEntry,
     deleteEntry
 }
