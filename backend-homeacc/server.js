@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-var port = 3001;
+var port = 3003;
 var hostname = "127.0.0.1";
 
 var cors = function (req, res, next) {
@@ -16,8 +16,8 @@ var cors = function (req, res, next) {
 
 app.use(cors);
 
-const userRoutes = require('./routes/userRoutes');
-app.use(userRoutes);
+const entryRoutes = require('./routes/entryRoutes');
+app.use(entryRoutes);
 
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
