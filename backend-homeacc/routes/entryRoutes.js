@@ -14,10 +14,11 @@ router.route('/api/entries').
     get(ctrl.fetchEntries);
 
 router.route('/api/entry/:entryId').
-    get(ctrl.fetchEntryById);
+    get(ctrl.fetchEntryById).
+    put(ctrl.editEntry);
 
 router.route('/api/entry/').
-    post(ctrl.addEntry);
+    post(ctrl.editEntry);
 
 router.route('/api/entry/delete/:entryIdToDelete').
     put(ctrl.deleteEntry);

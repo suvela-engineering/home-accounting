@@ -1,13 +1,16 @@
 const sql = require('../db/entryQueries.js');
 const validator = require("../validators/validator");
+const entryUtils = require('../Utils/entryUtils');
 
+// GET
 const getEntries = async (req, res, next) => {
     u = await sql.getEntries();
-    if (validator.isNull(u?.rows))
+    if (validator.isNullOrEmptyOrUndef(u?.rows))
         return next(new Error(error));
     return u.rows;
 }
 
+// GET
 const getEntry = async (req, res, next, id = null) => {
     let entryId = id ?? req.params.entryId;
 
@@ -24,22 +27,25 @@ const getEntry = async (req, res, next, id = null) => {
     return u.rows[0];
 }
 
-const addEntry = async (req, res, next) => {
-    const entryData = req.body;
+// PUT & POST
+const editEntry = async (req, res, next) => {
+    const entryData = req;
+    let entryEdit = null;
 
-    if (validator.isNull(entryData))
+    if (validator.isNullOrEmptyOrUndef(entryData.body))
         return next(new Error("Data not provided"));
 
-    if (entryData.constructor === Object && Object.keys(entryData).length === 0)
+    if (entryData.body === Object && Object.keys(entryData.body).length === 0)
         return next(new Error("Object is missing information"));
 
-    let i = await sql.insertEntry(entryData);
-    let newEntryId = i?.rows[0]?.entry_id;
+    entryEdit = await entryUtils.entryEditUtil(entryData);
 
-    return await getEntry(req, res, next, newEntryId); // TOIMII NÄIN MUTTA EI EHKÄ HYVÄ, pitäsikö kutsua controllerin fetchentryid? vai oisko joku toinen
-    // parempi kun on lisätty insertillä käyttäjä ja sitte pitäisi palauttaa se lisätty
+    let editedEntryId = entryEdit?.rows[0]?.entry_id;
+
+    return await getEntry(req, res, next, editedEntryId);
 }
 
+// SOFT DELETE
 const deleteEntry = async (req, res, next) => {
     let entryIdToDelete = req.params.entryIdToDelete;
 
@@ -59,6 +65,6 @@ const deleteEntry = async (req, res, next) => {
 module.exports = {
     getEntries,
     getEntry,
-    addEntry,
+    editEntry,
     deleteEntry
 }

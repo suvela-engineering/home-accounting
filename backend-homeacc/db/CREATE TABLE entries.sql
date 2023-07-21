@@ -32,16 +32,19 @@ VALUES (
         current_user
     );
 -- 6.
-CREATE TABLE entries (
+-- now()::timestamp(0) - remove milliseconds to round nearest second
+-- amount decimal 10 = how many numbers in total and 2 = two of them is decimal
+ALTER TABLE entries (
     ENTRY_ID SERIAL PRIMARY KEY,
     ENTRY_NAME VARCHAR(255),
     ENTRY_DESCRIPTION TEXT,
     ENTRY_CATEGORY_ID INTEGER,
-    START timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    START timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
     STOP timestamp,
     DELETED BOOL NOT NULL DEFAULT FALSE,
-    MODIFIED timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    MODIFIED timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
     MODIFIED_BY VARCHAR(30),
+    AMOUNT DECIMAL(10,2) NOT NULL DEFAULT 0.0,
     CONSTRAINT FK_CATEGORY_ID FOREIGN KEY (ENTRY_CATEGORY_ID) REFERENCES categories(CATEGORY_ID)
 );
 -- 7. 
@@ -81,3 +84,9 @@ FROM entries AS Entry;
 
 INSERT INTO entries(ENTRY_NAME, ENTRY_DESCRIPTION, ENTRY_CATEGORY_ID, MODIFIED_BY)VALUES('lidl testi sql','lidl testi sql on testi',2,'juho sql testi');
 INSERT INTO entries(ENTRY_NAME, ENTRY_DESCRIPTION, ENTRY_CATEGORY_ID, MODIFIED_BY) VALUES(?,?,?,?);
+
+
+ALTER TABLE entries
+   ALTER COLUMN START SET DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
+   ALTER COLUMN MODIFIED SET DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
+   ADD COLUMN  AMOUNT DECIMAL(10,2) NOT NULL DEFAULT 0.0
