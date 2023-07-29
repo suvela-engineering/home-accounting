@@ -1,5 +1,6 @@
 const pool = require('../pool.env');
 const queries = require("../Utils/queries");
+const validator = require("../validators/validator");
 
 module.exports = {
     getEntries: () => {
@@ -38,13 +39,13 @@ module.exports = {
     insertEntry: (entryData) => {
         return new Promise((resolve, reject) => {
             let query = "INSERT INTO entries(ENTRY_NAME, ENTRY_DESCRIPTION,";
-            query += " ENTRY_CATEGORY_ID, MODIFIED_BY, AMOUNT)";
-            query += " VALUES($1, $2, $3, $4, $5) RETURNING ENTRY_ID;";
-            let params = [entryData.ENTRY_NAME,
-            entryData.ENTRY_DESCRIPTION,
-            entryData.ENTRY_CATEGORY_ID,
-            entryData.MODIFIED_BY,
-            entryData.AMOUNT
+            query += " ENTRY_CATEGORY_ID,  AMOUNT)";
+            query += " VALUES($1, $2, $3, $4) RETURNING ENTRY_ID;";
+            let params = [entryData.entry_name,
+            entryData.entry_description,
+            entryData.entry_category_id,
+            entryData.modified_by,
+            entryData.amount
             ];
             pool.query(query, params, function (error, result, fields) {
                 if (error) {
@@ -58,18 +59,8 @@ module.exports = {
     },
     editEntry: (entryId, entryData) => {
         return new Promise((resolve, reject) => {
-            // let query = "UPDATE entries SET "
-            // query += "ENTRY_NAME = $1, ENTRY_DESCRIPTION = $2, ENTRY_CATEGORY_ID = $3, "
-            // query += "MODIFIED_BY = $4, ";
-            // query += " RETURNING ENTRY_ID;";
-            // let params = [entryData.ENTRY_NAME,
-            // entryData.ENTRY_DESCRIPTION,
-            // entryData.ENTRY_CATEGORY_ID,
-            // entryData.MODIFIED_BY
-            // ];
-
-            // Create query
             let query = queries.updateByIdQuery(entryId, 'ENTRY_ID', 'entries', entryData);
+            console.log("query PUT Entry: " + query);
 
             // Turn req.body (entryData) into an array of values
             let colValues = Object.keys(entryData).map(function (key) {
@@ -93,7 +84,14 @@ module.exports = {
             if (entryId) {
                 params.push(entryId);
             }
-            let query = "UPDATE entries SET deleted = true WHERE entry_id = $1";
+
+            // Modified timestamp and Modified_By user
+            let queryUpdateModified = queries.addModifiedQuery(false);
+
+            let query = "UPDATE entries SET deleted = true, ";
+            query += queryUpdateModified;
+            query += "WHERE entry_id = $1 ";
+            query += "RETURNING ENTRY_ID";
             pool.query(query, params, function (error, result, fields) {
                 if (error) {
                     reject(error);
