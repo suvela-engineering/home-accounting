@@ -21,7 +21,7 @@ router.route('/api/entry/').
     post(ctrl.editEntry);
 
 router.route('/api/entry/delete/:entryIdToDelete').
-    put(ctrl.deleteEntry);
+    get(ctrl.deleteEntry);
 
 //router.use(handler.asyncHandler);
 router.use(handler.errorHandler);

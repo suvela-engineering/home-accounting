@@ -6,3 +6,4 @@ frontend-homeac/node_modules
 
 # settings
 backend-homeacc/pool.env
+backend-homeacc/node_modules/.package-lock.json

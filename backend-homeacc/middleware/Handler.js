@@ -10,4 +10,4 @@ module.exports = {
     //         .resolve(fn(req, res, next))
     //         .catch(next); 
     // }
-}
+}   

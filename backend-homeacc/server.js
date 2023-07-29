@@ -1,13 +1,13 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-var port = 3003;
-var hostname = "127.0.0.1";
+const port = 3003;
+const hostname = "127.0.0.1";
 
-var cors = function (req, res, next) {
+const cors = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,6 +17,7 @@ var cors = function (req, res, next) {
 app.use(cors);
 
 const entryRoutes = require('./routes/entryRoutes');
+const { camelCase } = require('lodash');
 app.use(entryRoutes);
 
 app.listen(port, hostname, () => {

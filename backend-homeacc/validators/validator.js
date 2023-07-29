@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 module.exports = {
     isNullOrEmptyOrUndef: (input) => {
         if (input == null || input == '' || input == undefined)
@@ -24,5 +26,5 @@ module.exports = {
             return new Error(entity + ' is deleted');
 
         return null;
-    }
+    },
 }

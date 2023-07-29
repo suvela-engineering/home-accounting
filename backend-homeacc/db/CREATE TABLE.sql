@@ -6,10 +6,10 @@ GRANT ALL PRIVILEGES ON DATABASE entriesdb TO suvadmin -- 4.
         CATEGORY_ID SERIAL PRIMARY KEY,
         CATEGORY_NAME VARCHAR(255),
         CATEGORY_DESCRIPTION TEXT,
-        START timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+        START timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
         STOP timestamp,
         DELETED BOOL NOT NULL DEFAULT FALSE,
-        MODIFIED timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+        MODIFIED timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
         MODIFIED_BY VARCHAR(30)
     );
 -- 5. Insert into categories

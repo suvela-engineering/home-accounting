@@ -1,6 +1,7 @@
+const commonUtils = require('../Utils/commonUtils.js');
+const entryUtils = require('../Utils/entryUtils.js');
 const sql = require('../db/entryQueries.js');
 const validator = require("../validators/validator");
-const entryUtils = require('../Utils/entryUtils');
 
 // GET
 const getEntries = async (req, res, next) => {
@@ -29,20 +30,37 @@ const getEntry = async (req, res, next, id = null) => {
 
 // PUT & POST
 const editEntry = async (req, res, next) => {
-    const entryData = req;
+    let entryData = req.body;
     let entryEdit = null;
 
-    if (validator.isNullOrEmptyOrUndef(entryData.body))
+    if (validator.isNullOrEmptyOrUndef(entryData))
         return next(new Error("Data not provided"));
 
-    if (entryData.body === Object && Object.keys(entryData.body).length === 0)
+    if (entryData === Object && Object.keys(entryData).length === 0)
         return next(new Error("Object is missing information"));
 
-    entryEdit = await entryUtils.entryEditUtil(entryData);
+    entryData = commonUtils.objKeysToLowerCase(entryData);
+    let schemaError = entryUtils.validateEntrySchema(entryData);
 
-    let editedEntryId = entryEdit?.rows[0]?.entry_id;
+    if (validator.isNullOrEmptyOrUndef(schemaError) == false)
+        return next(new Error(schemaError));
 
-    return await getEntry(req, res, next, editedEntryId);
+    let entryId = req.params?.entryId ?? 0;
+
+    // New entry
+    if (entryId == 0) {
+        entryEdit = await sql.insertEntry(entryData);
+        return await getEntry(req, res, next, entryEdit?.rows[0]?.entry_id);
+    }
+
+    // Edit an existing entry
+    let entryOld = await getEntry(req, res, next, entryId);
+    if (commonUtils.commonPropsOfObjsChanged(entryData, entryOld))
+        return next(new Error("No data changes detected"));
+
+    entryEdit = await sql.editEntry(entryId, entryData, entryOld);
+
+    return await getEntry(req, res, next, entryEdit?.rows[0]?.entry_id);
 }
 
 // SOFT DELETE
@@ -51,15 +69,15 @@ const deleteEntry = async (req, res, next) => {
 
     let idValidationError = validator.checkIdError(entryIdToDelete, 'Entry');
     if (idValidationError != null)
-        return next(idValidationError);
+        return next(idValidationError); k
 
     let entryToDelete = await sql.getEntryById(entryIdToDelete);
 
     let entryNullDeletedError = validator.checkNullDeletedError(entryToDelete?.rows[0], 'Entry', true);
     if (entryNullDeletedError != null)
         return next(entryNullDeletedError);
-
-    await sql.deleteEntry(entryIdToDelete);
+    const entry = await sql.deleteEntry(entryIdToDelete);
+    return entry?.rows[0]?.entry_id ?? '';
 }
 
 module.exports = {
