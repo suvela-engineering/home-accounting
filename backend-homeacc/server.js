@@ -17,8 +17,8 @@ const cors = function (req, res, next) {
 app.use(cors);
 
 const entryRoutes = require('./routes/entryRoutes');
-const { camelCase } = require('lodash');
-app.use(entryRoutes);
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use([entryRoutes, categoryRoutes]);
 
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);

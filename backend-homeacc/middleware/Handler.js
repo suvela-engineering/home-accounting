@@ -10,4 +10,9 @@ module.exports = {
     //         .resolve(fn(req, res, next))
     //         .catch(next); 
     // }
-}   
+
+    //     if (validator.isNullOrEmptyOrUndef(res))
+    //     return;
+    // if (validator.isNullOrEmptyOrUndef(res.StatusCode) == false && res.StatusCode >= 400)
+    //     res.status(StatusCodes.BAD_REQUEST).json({ status: "NOT OK", msg: err.message }); // 400
+}

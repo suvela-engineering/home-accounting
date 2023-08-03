@@ -23,8 +23,8 @@ INSERT INTO categories (
         MODIFIED_BY
     )
 VALUES (
-        'Ravintola',
-        'Ravintolassa/Noutoruoka',
+        'Testi Autoilu',
+        'Testi autoilu kategoria',
         current_timestamp AT TIME ZONE 'UTC',
         NULL,
         FALSE,

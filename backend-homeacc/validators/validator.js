@@ -17,14 +17,19 @@ module.exports = {
     },
     checkNullDeletedError: (input, entity, checkDeleted = false) => {
         if (module.exports.isNullOrEmptyOrUndef(input))
-            return new Error(entity + ' id is null.');
+            return new Error(entity + ' not found');
 
-        if (input.deleted && checkDeleted)
+        if (input?.deleted && checkDeleted)
             return new Error(entity + ' is already deleted');
 
-        if (input.deleted)
+        if (input?.deleted)
             return new Error(entity + ' is deleted');
 
         return null;
+    },
+    checkContent: (res, entity) => {
+        if (module.exports.isNullOrEmptyOrUndef(entity))
+            return res.status(204).send();
+        return res.json({ status: "OK", data: entity });
     },
 }

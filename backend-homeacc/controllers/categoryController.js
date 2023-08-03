@@ -1,40 +1,41 @@
-const entryService = require('../services/entryService');
+const categoryService = require('../services/categoryService');
 const { StatusCodes } = require('http-status-codes');
+const validator = require("../validators/validator.js");
 
 module.exports = {
     // GET ALL (EXCL. SOFT DELETED)
     fetchCategories: async (req, res, next) => {
         console.log("fetchCategories started ...");
-        const uRows = await entryService.getEntries(req, res, next);
-        if (res.status >= StatusCodes.BAD_REQUEST) // 400
+        const uRows = await categoryService.getCategories(req, res, next);
+        if (res.statusCode >= StatusCodes.BAD_REQUEST) // 400
             return;
-        res.json({ status: "OK", categories: uRows });
+        res.json({ status: "OK", data: uRows });
     },
 
     // GET ONE
-    // fetchEntryById: async (req, res, next) => {
-    //     console.log("fetchEntryById, started ...");
-    //     const entry = await entryService.getEntry(req, res, next);
-    //     if (res.status >= StatusCodes.BAD_REQUEST) // 400
-    //         return;
-    //     res.json({ status: "OK", entry: entry });
-    // },
+    fetchCategoryById: async (req, res, next) => {
+        console.log("fetchCategoryById, started ...");
+        const category = await categoryService.getCategory(req, res, next);
+        if (res.statusCode >= StatusCodes.BAD_REQUEST) // 400
+            return;
+        return validator.checkContent(res, category);
+    },
 
-    // // PUT & POST
-    // editEntry: async (req, res, next) => {
-    //     console.log("editEntry, started ...");
-    //     const entry = await entryService.editEntry(req, res, next);
-    //     if (res.statusCode >= StatusCodes.BAD_REQUEST) // 400
-    //         return;
-    //     res.json({ status: "OK,", entry: entry });
-    // },
+    // PUT & POST
+    editCategory: async (req, res, next) => {
+        console.log("editCategory, started ...");
+        const category = await categoryService.editCategory(req, res, next);
+        if (res.statusCode >= StatusCodes.BAD_REQUEST) // 400
+            return;
+        res.json({ status: "OK,", data: category });
+    },
 
-    // // SOFT DELETE
-    // deleteEntry: async (req, res, next) => {
-    //     console.log("deleteEntry, started ...");
-    //     const entryId = await entryService.deleteEntry(req, res, next);
-    //     if (res.status >= StatusCodes.BAD_REQUEST) // 400
-    //         return;
-    //     res.json({ status: "OK,", msg: "Entry " + entryId + " deleted succesfully" });
-    // },
+    // SOFT DELETE
+    deleteCategory: async (req, res, next) => {
+        console.log("deleteCategory, started ...");
+        const categoryName = await categoryService.deleteCategory(req, res, next);
+        if (res.statusCode >= StatusCodes.BAD_REQUEST) // 400
+            return;
+        res.json({ status: "OK,", msg: "Category " + categoryName + " deleted succesfully" });
+    },
 }

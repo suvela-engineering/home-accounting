@@ -27,10 +27,8 @@ module.exports = {
         query += setLastComma ? ', ' : '';
         return query;
     },
-    // setModified: (input) => {
-    //     if (input == "MODIFIED")
-    //         return "MODIFIED = now()::timestamp(0) AT TIME ZONE 'UTC' ";
-    //     if (input == "MODIFIED_BY")
-    //         return "MODIFIED_BY = COALESCE(current_user,MODIFIED_BY), ";
-    // }
+    getModifiedBy: (input) => { 
+            // ehkä myöhemmin voi laittaa palauttamaan  kirjautuneen käyttäjän
+            return input;
+    }
 }

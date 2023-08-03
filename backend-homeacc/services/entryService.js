@@ -39,13 +39,14 @@ const editEntry = async (req, res, next) => {
     if (entryData === Object && Object.keys(entryData).length === 0)
         return next(new Error("Object is missing information"));
 
-    entryData = commonUtils.objKeysToLowerCase(entryData);
-    let schemaError = entryUtils.validateEntrySchema(entryData);
+    let entryId = req.params?.entryId ?? 0;
+
+    entryData = commonUtils.objKeysToLowerCase(entryData, entryId);
+    let schemaError = entryUtils.validateEntrySchema(entryData, req.method.toLowerCase());
 
     if (validator.isNullOrEmptyOrUndef(schemaError) == false)
         return next(new Error(schemaError));
 
-    let entryId = req.params?.entryId ?? 0;
 
     // New entry
     if (entryId == 0) {
@@ -77,7 +78,7 @@ const deleteEntry = async (req, res, next) => {
     if (entryNullDeletedError != null)
         return next(entryNullDeletedError);
     const entry = await sql.deleteEntry(entryIdToDelete);
-    return entry?.rows[0]?.entry_id ?? '';
+    return entry?.rows[0]?.entry_name ?? '';
 }
 
 module.exports = {
