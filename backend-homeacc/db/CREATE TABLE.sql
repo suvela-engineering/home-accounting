@@ -2,14 +2,18 @@
 sudo - u postgres createdb - e entriesdb -- 2.
 psql - d entriesdb - U suvadmin -- 3.
 GRANT ALL PRIVILEGES ON DATABASE entriesdb TO suvadmin -- 4.
+
+SET TIME ZONE 'UTC'; --4.5 oma käsky aja vaan tämä rivi
+
+-- 4.7
     CREATE TABLE categories (
         CATEGORY_ID SERIAL PRIMARY KEY,
         CATEGORY_NAME VARCHAR(255),
         CATEGORY_DESCRIPTION TEXT,
-        START timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
+        START timestamp without time zone NOT NULL DEFAULT DEFAULT now();, -- this is UTC
         STOP timestamp,
         DELETED BOOL NOT NULL DEFAULT FALSE,
-        MODIFIED timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
+        MODIFIED timestamp without time zone NOT NULL DEFAULT DEFAULT now();, -- this is UTC
         MODIFIED_BY VARCHAR(30)
     );
 -- 5. Insert into categories
@@ -39,10 +43,10 @@ ALTER TABLE entries (
     ENTRY_NAME VARCHAR(255),
     ENTRY_DESCRIPTION TEXT,
     ENTRY_CATEGORY_ID INTEGER,
-    START timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
-    STOP timestamp,
+    START TIMESTAMP WITH TIME ZONE; NOT NULL DEFAULT now(),
+    STOP TIMESTAMP WITH TIME ZONE,
     DELETED BOOL NOT NULL DEFAULT FALSE,
-    MODIFIED timestamp without time zone NOT NULL DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
+    MODIFIED TIMESTAMP WITH TIME ZONE; NOT NULL DEFAULT now(),
     MODIFIED_BY VARCHAR(30),
     AMOUNT DECIMAL(10,2) NOT NULL DEFAULT 0.0,
     CONSTRAINT FK_CATEGORY_ID FOREIGN KEY (ENTRY_CATEGORY_ID) REFERENCES categories(CATEGORY_ID)
@@ -87,6 +91,10 @@ INSERT INTO entries(ENTRY_NAME, ENTRY_DESCRIPTION, ENTRY_CATEGORY_ID, MODIFIED_B
 
 
 ALTER TABLE entries
-   ALTER COLUMN START SET DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
-   ALTER COLUMN MODIFIED SET DEFAULT (now()::timestamp(0) AT TIME ZONE 'UTC'),
-   ADD COLUMN  AMOUNT DECIMAL(10,2) NOT NULL DEFAULT 0.0
+   ALTER COLUMN START SET DEFAULT (now() at time zone 'utc'),
+   ALTER COLUMN MODIFIED SET DEFAULT (now() at time zone 'utc')
+
+ALTER TABLE entries
+    ALTER COLUMN STOP TYPE TIMESTAMP WITH TIME ZONE;
+    ALTER COLUMN MODIFIED TYPE TIMESTAMP WITH TIME ZONE,
+    ALTER COLUMN START TYPE TIMESTAMP WITH TIME ZONE ;

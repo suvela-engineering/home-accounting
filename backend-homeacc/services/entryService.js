@@ -47,9 +47,9 @@ const editEntry = async (req, res, next) => {
     if (validator.isNullOrEmptyOrUndef(schemaError) == false)
         return next(new Error(schemaError));
 
-
     // New entry
     if (entryId == 0) {
+        entryData = commonUtils.generateObjInfo(entryData);
         entryEdit = await sql.insertEntry(entryData);
         return await getEntry(req, res, next, entryEdit?.rows[0]?.entry_id);
     }
@@ -77,6 +77,7 @@ const deleteEntry = async (req, res, next) => {
     let entryNullDeletedError = validator.checkNullDeletedError(entryToDelete?.rows[0], 'Entry', true);
     if (entryNullDeletedError != null)
         return next(entryNullDeletedError);
+        
     const entry = await sql.deleteEntry(entryIdToDelete);
     return entry?.rows[0]?.entry_name ?? '';
 }

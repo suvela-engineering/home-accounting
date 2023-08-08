@@ -34,10 +34,20 @@ module.exports = {
     },
     insertCategory: (data) => {
         return new Promise((resolve, reject) => {
-            let query = "INSERT INTO categories(CATEGORY_NAME, CATEGORY_DESCRIPTION,";
-            query += " VALUES($1, $2) RETURNING CATEGORY_ID;";
-            let params = [data.category_name,
-            data.category_description];
+            // let query = "INSERT INTO categories(CATEGORY_NAME, CATEGORY_DESCRIPTION )";
+            // query += " VALUES($1, $2) RETURNING CATEGORY_ID;";
+            // let params = [data.category_name,
+            // data.category_description];
+
+            let query = queries.getInsertQuery('categories', data);
+            query += ' RETURNING CATEGORY_ID';
+            // Turn req.body (data) into an array of values
+            let params = Object.keys(data).map(function (key) {
+                return data[key];
+            });
+
+            console.log("query INSERT Category: " + query);
+            console.log("query INSERT PARAMS: " + params);
             pool.query(query, params, function (error, result, fields) {
                 if (error) {
                     reject(error);
@@ -50,7 +60,7 @@ module.exports = {
     },
     editCategory: (categoryId, data) => {
         return new Promise((resolve, reject) => {
-            let query = queries.updateByIdQuery(categoryId, 'CATEGORY_ID', 'categories', data);
+            let query = queries.getUpdateQuery(categoryId, 'CATEGORY_ID', 'categories', data);
             console.log("query PUT Category: " + query);
 
             // Turn req.body (data) into an array of values

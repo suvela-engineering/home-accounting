@@ -1,4 +1,5 @@
 const joi = require('joi');
+const commonUtils = require('../Utils/commonUtils.js');
 
 exports.validateEntrySchema = (entryData, reqType) => {
     const schema = joi.object({
@@ -21,6 +22,11 @@ exports.validateEntrySchema = (entryData, reqType) => {
             .alter({
                 put: (schema) => schema.optional(),
                 post: (schema) => schema.required()
+            }),
+        start: joi.date()
+            .alter({
+                put: (schema) => schema.optional(),
+                post: (schema) => schema.optional()
             }),
     }).unknown(false) // disallow extra fields in the request body;
 

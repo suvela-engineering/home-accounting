@@ -1,5 +1,7 @@
+const commonUtils = require("./commonUtils");
+
 module.exports = {
-    updateByIdQuery: (Id, IdName, tableName, cols) => {
+    getUpdateQuery: (Id, IdName, tableName, cols) => {
         // Setup static beginning of query
         var query = ['UPDATE ' + tableName];
         query.push('SET');
@@ -21,14 +23,29 @@ module.exports = {
         // Return a complete query string
         return query.join(' ');
     },
+    getInsertQuery: (tableName, insertData) => {
+        // Setup static beginning of query
+        var query = ['INSERT INTO '];
+
+        // Create another array storing each vals command
+        // and assigning a number value for parameterized query
+        var cols = [];
+        var vals = [];
+
+        Object.keys(insertData).forEach(function (key, i) {
+            cols.push(key);
+            vals.push('($' + (i + 1) + ')');
+        });
+        query.push(tableName + '(' + cols.join(', ') + ') ');
+        query.push('VALUES(' + vals.join(', ') + ') ');
+
+        // Return a complete query string
+        return query.join(' ');
+    },
     addModifiedQuery: (setLastComma = true) => {
-        let query = "MODIFIED_BY = COALESCE(current_user,MODIFIED_BY), ";
-        query += "MODIFIED = now()::timestamp(0) AT TIME ZONE 'UTC' ";
+        let query = "MODIFIED_BY = " + commonUtils.getModifiedBy() + ", ";
+        query += "MODIFIED = " + "'" + commonUtils.initWithNow() + "'"; // time in UTC
         query += setLastComma ? ', ' : '';
         return query;
     },
-    getModifiedBy: (input) => { 
-            // ehkä myöhemmin voi laittaa palauttamaan  kirjautuneen käyttäjän
-            return input;
-    }
 }
