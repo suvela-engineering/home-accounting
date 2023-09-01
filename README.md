@@ -3,8 +3,8 @@ user interface of home accouting mobile. Frontend react natice , backend nodejs,
 
 table elements:
 - https://www.npmjs.com/package/@swimlane/ngx-datatable
-- https://www.npmjs.com/package/handsontable
-- https://www.npmjs.com/package/primeng
+- https://www.npmjs.com/package/handsontable (maksullinen?)
+- https://www.npmjs.com/package/primeng -oma komponenti table (maksullinen?)
 - https://www.npmjs.com/package/angular-datatables
 
 # backend:
