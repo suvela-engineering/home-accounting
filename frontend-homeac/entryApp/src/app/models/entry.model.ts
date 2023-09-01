@@ -1,10 +1,10 @@
-export class Entry {
+export class Entry implements IEntry{
     entryId: number;
     entryName: string;
     entryDescription: string;
     entryCategoryId: number;
     start: Date;
-    stop: Date;
+    stop: Date | null;
     deleted: boolean;
     modified: Date;
     modifiedBy: string;
@@ -16,7 +16,7 @@ export class Entry {
       entryDescription: string,
       entryCategoryId: number,
       start: Date,
-      stop: Date,
+      stop: Date | null,
       deleted: boolean,
       modified: Date,
       modifiedBy: string,
@@ -33,5 +33,18 @@ export class Entry {
       this.modifiedBy = modifiedBy;
       this.amount = amount;
     }
+  }
+
+  interface IEntry {
+    entryId: number;
+    entryName: string;
+    entryDescription: string;
+    entryCategoryId: number;
+    start: Date;
+    stop: Date | null;
+    deleted: boolean;
+    modified: Date;
+    modifiedBy: string;
+    amount: number;
   }
   

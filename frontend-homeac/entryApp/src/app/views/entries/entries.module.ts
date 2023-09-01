@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EntriesRoutingModule } from './entries-routing.module';
 import { EntriesComponent } from './entries.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import { EntriesComponent } from './entries.component';
   ],
   imports: [
     CommonModule,
-    EntriesRoutingModule
+    EntriesRoutingModule,
+    NgxDatatableModule
   ],
   exports:[
     EntriesComponent
