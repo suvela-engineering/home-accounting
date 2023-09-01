@@ -5,16 +5,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EntryLayoutComponent } from './views/entry-layout/entry-layout.component';
+import { EntryLayoutModule } from './views/entry-layout/entry-layout.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    EntryLayoutComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    EntryLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

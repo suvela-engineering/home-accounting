@@ -1,6 +1,12 @@
 # homeacc-user
 user interface of home accouting mobile. Frontend react natice , backend nodejs, db Postgres
 
+table elements:
+- https://www.npmjs.com/package/@swimlane/ngx-datatable
+- https://www.npmjs.com/package/handsontable
+- https://www.npmjs.com/package/primeng
+- https://www.npmjs.com/package/angular-datatables
+
 # backend:
 1. Start by nodemon server.js from folder where the file is:
 

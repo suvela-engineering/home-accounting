@@ -2,17 +2,21 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EntryLayoutRoutingModule } from './entry-layout-routing.module';
 import { EntryControllerComponent } from '../../controllers/entry-controller/entry-controller.component';
-// import { EntryMainComponent } from './entry-main.component';
-
+import { EntryLayoutComponent } from './entry-layout.component';
+import { EntriesModule } from '../entries/entries.module';
 
 @NgModule({
   declarations: [
-    // EntryMainComponent
-    EntryControllerComponent
-  ],
+    EntryControllerComponent,
+    EntryLayoutComponent],
   imports: [
     CommonModule,
-    EntryLayoutRoutingModule
+    EntryLayoutRoutingModule,
+    EntriesModule
+  ],
+  exports: [
+    EntryControllerComponent,
+    EntryLayoutComponent
   ]
 })
 export class EntryLayoutModule { }
